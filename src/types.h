@@ -1465,4 +1465,29 @@ std::vector<std::shared_ptr<T>> subtract_sets(const std::vector<std::shared_ptr<
         return res_type::high_resolution;
     }
 
+    inline bool try_get_log_severity(rs2_log_severity& severity)
+    {
+        static const char* severity_var_name = "LRS_LOG_LEVEL";
+        auto content = getenv(severity_var_name);
+
+        if (content)
+        {
+            std::string content_str(content);
+            std::transform(content_str.begin(), content_str.end(), content_str.begin(), ::tolower);
+
+            for (uint32_t i = 0; i < RS2_LOG_SEVERITY_COUNT; i++)
+            {
+                auto current = (rs2_log_severity)i;
+                std::string name = librealsense::get_string(current);
+                std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+                if (content_str == name)
+                {
+                    severity = current;
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 #endif

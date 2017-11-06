@@ -78,6 +78,10 @@ namespace librealsense
                      rs2_recording_mode mode)
         : _devices_changed_callback(nullptr, [](rs2_devices_changed_callback*){})
     {
+        rs2_log_severity severity;
+        if (try_get_log_severity(severity))
+            log_to_file(severity, nullptr);
+
         LOG_DEBUG("Librealsense " << std::string(std::begin(rs2_api_version),std::end(rs2_api_version)));
 
         switch(type)
