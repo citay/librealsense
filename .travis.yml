@@ -50,7 +50,7 @@ before_install:
       sudo apt-get install -qq build-essential xorg-dev libglu1-mesa-dev libglew-dev libglm-dev;
       sudo apt-get install -qq libusb-1.0-0-dev;
       sudo apt-get install -qq libgtk-3-dev;
-      sudo apt-get install -qq python python-dev;
+      sudo apt-get install python2.7 python2.7-dev;
       sudo apt-get install gcc-5 g++-5;
       sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5;
     fi
@@ -93,7 +93,9 @@ script:
   # Exit immediately if a command exits with a non-zero status
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       set -e;
-      pyenv local `pyenv versions|sed 's/ //g'|grep "^3"|tail -1`;
+      pyenv install 2.7;
+      pyenv versions|sed 's/ //g';
+      pyenv local `pyenv versions|sed 's/ //g'|grep "^2"|tail -1`;
       mkdir build && cd build;
       cmake .. -DBUILD_EXAMPLES:BOOL=true -DBUILD_PYTHON_BINDINGS:BOOL=true -DBUILD_NODEJS_BINDINGS:BOOL=true;
       make -j $CPU_NUM;
