@@ -251,14 +251,6 @@ set(REALSENSE_HPP
     src/media/ros/ros_file_format.h
 )
 
-# Add additional include directories to allow file to include rosbag headers
-include(${CMAKE_CURRENT_LIST_DIR}/third-party/realsense-file/config.cmake)
-include_directories(
-        ${ROSBAG_HEADER_DIRS}
-        ${BOOST_INCLUDE_PATH}
-        ${LZ4_INCLUDE_PATH}
-)
-
 if(WIN32)
     source_group("Source Files\\Backend" FILES
         src/win/win-helpers.cpp
@@ -552,10 +544,10 @@ endif()
 
 set_target_properties(realsense2 PROPERTIES VERSION ${REALSENSE_VERSION_STRING}
                                 SOVERSION ${REALSENSE_VERSION_MAJOR})
-target_link_libraries(realsense2 realsense-file ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(realsense2 PRIVATE realsense-file ${CMAKE_THREAD_LIBS_INIT})
 list(APPEND librealsense_PKG_LIBS ${CMAKE_THREAD_LIBS_INIT})
 
-target_link_libraries(realsense2 usb)
+target_link_libraries(realsense2 PRIVATE usb)
 
 add_definitions(-DELPP_THREAD_SAFE)
 add_definitions(-DELPP_NO_DEFAULT_LOG_FILE)
@@ -566,6 +558,14 @@ set_target_properties (realsense2 PROPERTIES
 )
 
 set(LRS_LIB_NAME realsense2)
+
+# Add additional include directories to allow file to include rosbag headers
+include(${CMAKE_CURRENT_LIST_DIR}/third-party/realsense-file/config.cmake)
+target_include_directories(realsense2 PRIVATE
+        ${ROSBAG_HEADER_DIRS}
+        ${BOOST_INCLUDE_PATH}
+        ${LZ4_INCLUDE_PATH}
+        )
 
 target_include_directories(realsense2 PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                             $<INSTALL_INTERFACE:include>
@@ -600,6 +600,8 @@ option(BUILD_UNIT_TESTS "Build realsense unit tests." ON)
 option(BUILD_EXAMPLES "Build realsense examples and tools." ON)
 option(ENFORCE_METADATA "Require WinSDK with Metadata support during compilation. Windows OS Only" OFF)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings" OFF)
+option(BUILD_CV_EXAMPLES "Build OpenCV examples" OFF)
+option(BUILD_PCL_EXAMPLES "Build PCL examples" OFF)
 option(BUILD_NODEJS_BINDINGS "Build Node.js bindings" OFF)
 
 if((BUILD_EXAMPLES AND BUILD_GRAPHICAL_EXAMPLES) AND WIN32)
@@ -625,6 +627,14 @@ endif()
 
 if (BUILD_NODEJS_BINDINGS)
   add_subdirectory(wrappers/nodejs)
+endif()
+
+if (BUILD_CV_EXAMPLES)
+  add_subdirectory(wrappers/opencv)
+endif()
+
+if (BUILD_PCL_EXAMPLES)
+  add_subdirectory(wrappers/pcl)
 endif()
 
 # Check for unreferenced files
