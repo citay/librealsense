@@ -100,6 +100,8 @@ namespace librealsense
             GET_EXTRINSICS  = 0x53,     // get extrinsics
             SET_CAM_SYNC    = 0x69,     // set Inter-cam HW sync mode [0-default, 1-master, 2-slave]
             GET_CAM_SYNC    = 0x6A,     // fet Inter-cam HW sync mode
+            SETRGBAEROI     = 0x75,
+            GETRGBAEROI     = 0x76,
         };
 
         const int etDepthTableControl = 9; // Identifier of the depth table control
